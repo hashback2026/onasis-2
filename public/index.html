@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bulk STK Push</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: auto; }
+    textarea, input { width: 100%; margin: 10px 0; padding: 10px; }
+    button { padding: 12px; background: green; color: white; border: none; width: 100%; }
+    pre { background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Bulk STK Push (Onasis)</h2>
+
+<label>Phone Numbers (comma separated)</label>
+<textarea id="phones" placeholder="2547XXXXXXXX,2547XXXXXXXX"></textarea>
+
+<label>Amount (KES)</label>
+<input type="number" id="amount">
+
+<label>Reference</label>
+<input type="text" id="reference">
+
+<label>Account Ref (optional)</label>
+<input type="text" id="account_ref">
+
+<label>Description (optional)</label>
+<input type="text" id="description">
+
+<button onclick="sendSTK()">Send STK Push</button>
+
+<h3>Results</h3>
+<pre id="output"></pre>
+
+<script>
+async function sendSTK() {
+  const phones = document.getElementById("phones").value
+    .split(",")
+    .map(p => p.trim())
+    .filter(p => p);
+
+  const data = {
+    phones,
+    amount: document.getElementById("amount").value,
+    reference: document.getElementById("reference").value,
+    account_ref: document.getElementById("account_ref").value,
+    description: document.getElementById("description").value
+  };
+
+  const res = await fetch("/send-bulk", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+  document.getElementById("output").innerText =
+    JSON.stringify(result, null, 2);
+}
+</script>
+
+</body>
+</html>
